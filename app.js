@@ -4,11 +4,18 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+
 var userRouter = require('./routes/user');
 var adminRouter = require('./routes/admin');
 const { engine } = require('express-handlebars');
 
 var app = express();
+
+//for file upload
+var fileUpload = require('express-fileupload');
+
+//to access the database
+var db=require('./config/connection')
 
 // view engine setup
 // view engine setup
@@ -26,6 +33,16 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+
+//for file upload
+app.use(fileUpload());
+
+//conect db
+db.connect((err)=>{
+  if (err) console.log('connection error'+err);
+  else console.log('database connected to the port 27017');
+})
 
 app.use('/', userRouter);
 app.use('/admin', adminRouter);
